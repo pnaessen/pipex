@@ -1,0 +1,17 @@
+dup = cree une copie du fd en utilisant le int mini pas encore utilise : str[1][fd] le oldfd est le newfd si modif vont modif le meme fichier 
+
+ int file_desc = open("dup.txt", O_WRONLY);
+if(file_desc < 0) 
+    return
+int copy_desc = dup(file_desc);
+ write(copy_desc,"test\n", 5);
+  write(file_desc,"truc\n", 5);
+
+vont ecrire est sur meme fichier
+
+dup2 = la meme que dup sauf le choix sur la sortie 
+    dup2(file_desc, 1) ;  = stdout
+si j ecris sur stdout cela va modif aussi mon fichier
+
+execve = 
+
