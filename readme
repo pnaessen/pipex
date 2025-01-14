@@ -1,17 +1,172 @@
-dup = cree une copie du fd en utilisant le int mini pas encore utilise : str[1][fd] le oldfd est le newfd si modif vont modif le meme fichier 
+Exécuter les commandes avec execve :
 
- int file_desc = open("dup.txt", O_WRONLY);
-if(file_desc < 0) 
-    return
-int copy_desc = dup(file_desc);
- write(copy_desc,"test\n", 5);
-  write(file_desc,"truc\n", 5);
+    Le programme doit utiliser fork() pour créer des processus enfants qui exécuteront les commandes avec execve().
+    Chaque commande doit s exécuter dans un processus séparé :
+        Le premier processus lit file1 et écrit dans le pipe.
+        Le second processus lit depuis le pipe et écrit dans file2.
+    
 
-vont ecrire est sur meme fichier
 
-dup2 = la meme que dup sauf le choix sur la sortie 
-    dup2(file_desc, 1) ;  = stdout
-si j ecris sur stdout cela va modif aussi mon fichier
+Lire le contenu de file1.
+Passer ce contenu en entrée à cmd1.
+Rediriger la sortie de cmd1 comme entrée pour cmd2.
+Écrire le résultat final dans file2.
 
-execve = 
+La fonction dup (Duplicate) crée une copie d un descripteur de fichier existant.
 
+    Prototype : int dup(int oldfd);
+    Utilisation : Rediriger des descripteurs de fichiers sans changer leur valeur d origine.
+    Exemple :
+
+int new_fd = dup(STDOUT_FILENO);
+
+La fonction dup2 est similaire à dup, mais permet de spécifier directement le descripteur cible.
+
+    Prototype : int dup2(int oldfd, int newfd);
+    Utilisation : Rediriger l entrée/sortie standard vers un autre fichier ou pipe.
+    Exemple :
+
+dup2(pipe_fd[1], STDOUT_FILENO); // Redirige la sortie standard vers le pipe
+
+La fonction execve exécute un programme, remplaçant le processus courant par le nouveau programme.
+
+    Prototype : int execve(const char *pathname, char *const argv[], char *const envp[]);
+    Utilisation : Lancer une commande donnée (cmd1 ou cmd2) en utilisant son chemin et ses arguments.
+    Exemple :
+
+char *args[] = {"/bin/ls", "-l", NULL};
+execve(args[0], args, envp);
+
+
+La fonction fork crée un nouveau processus (appelé processus enfant) en copiant le processus appelant.
+
+    Prototype : pid_t fork(void);
+    Utilisation : Lancer un processus enfant qui exécutera une commande spécifique.
+    Exemple :
+
+pid_t pid = fork();
+if (pid == 0) {
+    // Code du processus enfant
+} else {
+    // Code du processus parent
+}
+
+
+La fonction pipe crée un canal de communication unidirectionnel entre deux processus.
+
+    Prototype : int pipe(int pipefd[2]);
+    Utilisation : Connecter la sortie d un processus à l entrée d un autre.
+    Exemple :
+
+int pipe_fd[2];
+pipe(pipe_fd); // pipe_fd[0] : lecture, pipe_fd[1] : écriture
+
+
+La fonction unlink supprime un fichier ou un lien symbolique.
+
+    Prototype : int unlink(const char *pathname);
+    Utilisation : Supprimer un fichier temporaire si nécessaire.
+    Exemple :
+
+unlink("tempfile.txt");
+
+
+
+La fonction wait suspend l exécution du processus parent jusqu à ce qu un processus enfant se termine.
+
+    Prototype : pid_t wait(int *wstatus);
+    Utilisation : Attendre qu un processus enfant se termine.
+    Exemple :
+
+int status;
+wait(&status);
+
+
+La fonction waitpid attend la fin d un processus enfant spécifique.
+
+    Prototype : pid_t waitpid(pid_t pid, int *wstatus, int options);
+    Utilisation : Attendre un processus particulier, avec des options avancées.
+    Exemple :
+
+waitpid(child_pid, NULL, 0);
+
+
+Validation des arguments : Vérifiez que je reçoit  4 arguments.
+
+
+    Ouvrir file1 pour la lecture.
+    Créer ou ouvrir file2 pour la sortie.
+
+Création du pipe : Utilisez pipe() pour établir un canal de communication.
+Création des processus enfants :
+
+    Un processus enfant pour cmd1.
+    Un autre processus enfant pour cmd2.
+
+Redirection des descripteurs :
+
+    Rediriger les entrées/sorties avec dup2.
+
+Exécution des commandes : Utilisez execve pour exécuter cmd1 et cmd2.
+Nettoyage :
+
+    Fermer les descripteurs inutilisés.
+    Utiliser wait ou waitpid pour éviter les processus zombies.
+
+///////////////////////////////////////////////////////////////////////////////////
+int main(int argc, char **argv)
+{
+    int pipe_fd[2];
+    pid_t pid1;
+    pid_t pid2;
+     int file1;
+
+    if (argc != 5)
+    {
+        printf(stderr, "file1 cmd1 cmd2 file2\n");
+        return (EXIT_FAILURE);
+    }
+    if (pipe(pipe_fd) == -1)
+        error_exit("pipe");
+    pid1 = fork();
+    if (pid1 == -1)
+        error_exit("fork");
+    if (pid1 == 0)
+    {
+        file1 = open(argv[1], O_RDONLY);
+        if (file1 == -1)
+            error_exit("open file1");
+        dup2(file1, STDIN_FILENO);
+        dup2(pipe_fd[1], STDOUT_FILENO);
+        close(file1);
+        close(pipe_fd[0]);
+        close(pipe_fd[1]);
+
+        char *cmd1[] = {"/bin/sh", "-c", argv[2], NULL};
+        execve(cmd1[0], cmd1, NULL);
+        error_exit("execve cmd1");
+    }
+    pid2 = fork();
+    if (pid2 == -1)
+        error_exit("fork");
+    if (pid2 == 0)
+    {
+        int file2 = open(argv[4], O_WRONLY);
+        if (file2 == -1)
+            error_exit("open file2");
+        dup2(pipe_fd[0], STDIN_FILENO);
+        dup2(file2, STDOUT_FILENO);
+        close(file2);
+        close(pipe_fd[0]);
+        close(pipe_fd[1]);
+        char *cmd2[] = {"/bin/sh", "-c", argv[3], NULL};
+        execve(cmd2[0], cmd2, NULL);
+        error_exit("execve cmd2");
+    }
+    close(pipe_fd[0]);
+    close(pipe_fd[1]);
+    waitpid(pid1, NULL, 0);
+    waitpid(pid2, NULL, 0);
+
+    return (EXIT_SUCCESS);
+}
