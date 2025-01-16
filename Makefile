@@ -1,12 +1,12 @@
 NAME := pipex
 
-SRC:= $(addprefix $(SRC_DIR),)
+SRC:= $(addprefix $(SRC_DIR),init.c)
 OBJ_DIR:= .obj/
 OBJ:= $(SRC:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 DEPS:= $(OBJ:%.o=%.d)
 
 CC:= cc
-CCFLAGS:= -Wextra -Wall -Werror 
+CCFLAGS:= -Wextra -Wall -Werror -g
 CPPFLAGS = -MMD -MP
 SRC_DIR:= src/
 INCLUDES:= include/
@@ -19,7 +19,7 @@ HEADERS:= -I $(INCLUDES) -I $(LIBFT_DIR)
 
 all: welcome $(NAME)
 
-$(NAME): $(OBJ) $(LIBFT)
+$(NAME): $(LIBFT) $(OBJ) 
 	$(CC) $(CCFLAGS) $(OBJ) $(LIBFT_FLAG) -o $(NAME)
 	@echo "👨‍🍳 Cooking up binary goodness: $(BLUE)$(CC) $(CCFLAGS) $(OBJ) $(LIBFT_FLAG) -o $(NAME)$(DEF_COLOR)"
 	@echo "$(GREEN)🍽️ Le chef a COOK $(NAME) à la perfection ! Bon appétit ! 🍽️$(DEF_COLOR)"
@@ -28,6 +28,8 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(OBJ_DIR)
 	@echo "🛠️  $(MAGENTA)Compiling: $< $(DEF_COLOR)"
 	$(CC) $(CCFLAGS) $(CPPFLAGS) $(HEADERS) -o $@ -c $<
+
+$(LIBFT): libft
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR)
@@ -70,4 +72,4 @@ info:
 	@echo "OBJ": $(OBJ)
 	@echo "DEPS": $(DEPS)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re libft
