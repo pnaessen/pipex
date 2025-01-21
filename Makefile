@@ -6,7 +6,7 @@ OBJ:= $(SRC:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 DEPS:= $(OBJ:%.o=%.d)
 
 CC:= cc
-CCFLAGS:= -Wextra -Wall -Werror -g
+CCFLAGS:= -Wextra -Wall -Werror -g3
 CPPFLAGS = -MMD -MP
 SRC_DIR:= src/
 INCLUDES:= include/
