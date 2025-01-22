@@ -6,7 +6,7 @@
 /*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 12:04:20 by pnaessen          #+#    #+#             */
-/*   Updated: 2025/01/16 10:12:35 by pnaessen         ###   ########lyon.fr   */
+/*   Updated: 2025/01/22 09:33:02 by pnaessen         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	**ft_split(char const *s, char c)
 	int		i;
 	int		j;
 
-	if (!s)
+	if (*s == '\0')
 		return (NULL);
 	result = (char **)malloc(sizeof(char *) * (ft_count_word(s, c) + 1));
 	if (!result)
