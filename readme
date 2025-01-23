@@ -1,12 +1,5 @@
 Pour les bonus :
 
-Pour gérer plusieurs pipes, vous devrez :
-
-Créer un tableau de pipes en fonction du nombre de commandes
-Modifier la logique pour chaîner les pipes entre les commandes
-Gérer la fermeture des descripteurs de fichiers correctement
-
-
 Pour le here_doc :
 
 Détecter si le premier argument est "here_doc"
