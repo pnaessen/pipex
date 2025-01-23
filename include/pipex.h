@@ -6,7 +6,7 @@
 /*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 13:02:08 by pnaessen          #+#    #+#             */
-/*   Updated: 2025/01/22 08:41:22 by pnaessen         ###   ########lyon.fr   */
+/*   Updated: 2025/01/23 13:31:36 by pnaessen         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,15 @@ char	*get_path(char *cmd, char **env);
 void	handle_error(const char *str, int fd1, int fd2);
 void	handle_child(char **argv, int pipe_fd[2], char **env);
 void	handle_parent(char **argv, int pipe_fd[2], char **env);
+
+////////////////////////////init_bonus//////////////////
+void	redirect_input_output(char *input, char *output, int input_fd,
+			int output_fd);
+int		**create_pipes(int num_pipes);
+void	free_pipes(int **pipes, int num_pipes);
+void	close_pipes(int **pipes, int num_pipes);
+void	execute_command(char *cmd, char **env, int input_fd, int output_fd);
+void	parent_wait(pid_t *pids, int num_pids, int **pipes, int num_pipes);
+void	launch_pipeline(int argc, char **argv, char **env);
 
 #endif
