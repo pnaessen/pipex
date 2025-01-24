@@ -6,7 +6,7 @@
 /*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 13:02:08 by pnaessen          #+#    #+#             */
-/*   Updated: 2025/01/23 13:31:36 by pnaessen         ###   ########lyon.fr   */
+/*   Updated: 2025/01/24 09:07:13 by pnaessen         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,11 @@ void	redirect_input_output(char *input, char *output, int input_fd,
 int		**create_pipes(int num_pipes);
 void	free_pipes(int **pipes, int num_pipes);
 void	close_pipes(int **pipes, int num_pipes);
-void	execute_command(char *cmd, char **env, int input_fd, int output_fd);
+void	execute_command(char *cmd, char **env, int **pipes, pid_t *pids,
+			int argc);
 void	parent_wait(pid_t *pids, int num_pids, int **pipes, int num_pipes);
 void	launch_pipeline(int argc, char **argv, char **env);
+void	redirect_last(char *output, int input_fd, int **pipes, int argc,
+			pid_t *pids);
 
 #endif
