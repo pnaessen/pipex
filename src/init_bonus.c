@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pn <pn@student.42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:06:38 by pnaessen          #+#    #+#             */
-/*   Updated: 2025/01/25 15:07:14 by pnaessen         ###   ########lyon.fr   */
+/*   Updated: 2025/01/25 21:47:01 by pn               ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,7 @@ void	parent_wait(pid_t *pids, int num_pids, int **pipes, int num_pipes)
 			waitpid(pids[i], &status, 0);
 		i++;
 	}
+	fprintf(stderr, "last status: %d\n", last_status);
 	free(pids);
 	free_pipes(pipes, num_pipes);
 	if (WIFEXITED(last_status))
@@ -222,6 +223,9 @@ void	launch_pipeline(int argc, char **argv, char **env)
 					if (dup2(pipes[i][1], STDOUT_FILENO) < 0)
 						handle_error("Dup2 failed", -1, -1);
 					handle_here_doc(argv[2], pipes[i][1]);
+					close_pipes(pipes, argc - 4);
+					free_pipes(pipes, argc - 4);
+					free(pids);
 					exit(EXIT_SUCCESS);
 				}
 				else
