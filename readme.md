@@ -60,7 +60,7 @@ This is equivalent to: `cmd << LIMITER | cmd1 >> file`
 - Pipe creation failures
 
 ## 🎯 Structure
-
+```
 📁 include/
 📁 libft/
 📁 src/ 
@@ -69,7 +69,7 @@ This is equivalent to: `cmd << LIMITER | cmd1 >> file`
 │ ├── init.c
 │ └── utils.c
 └── Makefile
-
+```
 ## ⚠️ Notes
 
 - All memory allocations are properly freed
