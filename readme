@@ -1,7 +1,0 @@
-
-
-Pour le here_doc :
-
-Détecter si le premier argument est "here_doc"
-Lire l'entrée standard jusqu'à trouver le délimiteur (LIMITER)
-Utiliser O_APPEND au lieu de O_TRUNC pour le fichier de sortie
