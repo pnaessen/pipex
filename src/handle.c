@@ -6,7 +6,7 @@
 /*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 08:38:19 by pnaessen          #+#    #+#             */
-/*   Updated: 2025/01/23 13:31:33 by pnaessen         ###   ########lyon.fr   */
+/*   Updated: 2025/01/25 13:53:37 by pnaessen         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,6 @@ void	handle_error(const char *str, int fd1, int fd2)
 	perror(str);
 	exit(EXIT_FAILURE);
 }
-// void	handle_error(const char *str, int fd1, int fd2, int **pipes, int num_pipes)
-// {
-// 	if (fd1 >= 0)
-// 		close(fd1);
-// 	if (fd2 >= 0)
-// 		close(fd2);
-// 	if (pipes != NULL)
-// 		close_pipes(pipes, num_pipes);
-// 	perror(str);
-// 	exit(EXIT_FAILURE);
-// }
 
 void	handle_child(char **argv, int pipe_fd[2], char **env)
 {

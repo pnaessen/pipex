@@ -6,7 +6,7 @@
 /*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/10 13:02:08 by pnaessen          #+#    #+#             */
-/*   Updated: 2025/01/24 09:07:13 by pnaessen         ###   ########lyon.fr   */
+/*   Updated: 2025/01/25 14:58:12 by pnaessen         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ void	handle_child(char **argv, int pipe_fd[2], char **env);
 void	handle_parent(char **argv, int pipe_fd[2], char **env);
 
 ////////////////////////////init_bonus//////////////////
-void	redirect_input_output(char *input, char *output, int input_fd,
-			int output_fd);
+void	redirect_input_output(int input_fd, int output_fd);
 int		**create_pipes(int num_pipes);
 void	free_pipes(int **pipes, int num_pipes);
 void	close_pipes(int **pipes, int num_pipes);
@@ -48,6 +47,9 @@ void	execute_command(char *cmd, char **env, int **pipes, pid_t *pids,
 void	parent_wait(pid_t *pids, int num_pids, int **pipes, int num_pipes);
 void	launch_pipeline(int argc, char **argv, char **env);
 void	redirect_last(char *output, int input_fd, int **pipes, int argc,
+			pid_t *pids, int is_heredoc);
+void	redirect_first(char *input, int output_fd, int **pipes, int argc,
 			pid_t *pids);
+void	handle_here_doc(char *delimiter, int pipe_fd);
 
 #endif
