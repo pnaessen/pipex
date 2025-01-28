@@ -6,7 +6,7 @@
 /*   By: pn <pn@student.42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 15:42:30 by pn                #+#    #+#             */
-/*   Updated: 2025/01/28 20:15:09 by pn               ###   ########lyon.fr   */
+/*   Updated: 2025/01/28 20:21:26 by pn               ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ char	*get_path(char *cmd, char **env)
 	int		i;
 
 	path_var = get_path_var(env);
+	if (!path_var)
+		return (NULL);
 	paths = ft_split(path_var, ':');
 	if (!path_var || !paths)
 		return (NULL);
