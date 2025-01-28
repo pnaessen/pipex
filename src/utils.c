@@ -3,55 +3,84 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pn <pn@student.42lyon.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/22 08:36:13 by pnaessen          #+#    #+#             */
-/*   Updated: 2025/01/22 09:31:57 by pnaessen         ###   ########lyon.fr   */
+/*   Created: 2025/01/28 15:41:31 by pn                #+#    #+#             */
+/*   Updated: 2025/01/28 20:13:41 by pn               ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	check_cmd(char *cmd, char **env)
+void    redirect_last(t_pipex *data, int i)
 {
-	char	*path;
-	char	**args;
+    int fd;
 
-	args = ft_split(cmd, ' ');
-	if (!args)
-		return (0);
-	path = get_path(args[0], env);
-	if (!path)
-	{
-		perror("command not found");
-		ft_free(args);
-		return (-1);
-	}
-	ft_free(args);
-	free(path);
-	return (1);
+    if (data->argv[data->argc - 1])
+    {
+        if (data->is_heredoc)
+            fd = open(data->argv[data->argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+        else
+            fd = open(data->argv[data->argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fd < 0)
+        {
+            perror("Open output file failed");
+            close_pipes(data->pipes, data->num_pipes);
+            free_pipex(data);
+            exit(EXIT_FAILURE);
+        }
+        if (dup2(fd, STDOUT_FILENO) < 0)
+            handle_error("Dup2 output failed", fd, -1);
+        close(fd);
+    }
+    if (data->pipes[i - 1][0] != -1)
+    {
+        if (dup2(data->pipes[i - 1][0], STDIN_FILENO) < 0)
+            handle_error("Dup2 pipe input failed", data->pipes[i - 1][0], -1);
+        close(data->pipes[i - 1][0]);
+    }
 }
 
-void	exec_cmd(char *cmd, char **env)
+void    redirect_first(t_pipex *data, int i)
 {
-	char	**args;
-	char	*path;
+    int fd;
 
-	args = ft_split(cmd, ' ');
-	if (!args)
-		handle_error("Split failed", -1, -1);
-	path = get_path(args[0], env);
-	if (!path)
+    if (data->argv[1])
+    {
+        fd = open(data->argv[1], O_RDONLY);
+        if (fd < 0)
+        {
+            perror("Open input file failed");
+            close_pipes(data->pipes, data->num_pipes);
+            free_pipex(data);
+            exit(EXIT_FAILURE);
+        }
+        if (dup2(fd, STDIN_FILENO) < 0)
+            handle_error("Dup2 input failed", fd, -1);
+        close(fd);
+    }
+    if (data->pipes[i][1] != -1)
+    {
+        if (dup2(data->pipes[i][1], STDOUT_FILENO) < 0)
+            handle_error("Dup2 pipe output failed", data->pipes[i][1], -1);
+        close(data->pipes[i][1]);
+    }
+}
+
+void	redirect_input_output(int input_fd, int output_fd)
+{
+	if (input_fd != -1)
 	{
-		ft_free(args);
-		ft_printf("Command not found");
-		exit(EXIT_FAILURE);
+		if (dup2(input_fd, STDIN_FILENO) < 0)
+			handle_error("Dup2 pipe input failed", input_fd, -1);
+		close(input_fd);
 	}
-	execve(path, args, env);
-	perror("Execve failed");
-	free(path);
-	ft_free(args);
-	exit(EXIT_FAILURE);
+	if (output_fd != -1)
+	{
+		if (dup2(output_fd, STDOUT_FILENO) < 0)
+			handle_error("Dup2 pipe output failed", output_fd, -1);
+		close(output_fd);
+	}
 }
 
 char	*get_path_var(char **env)
@@ -81,31 +110,4 @@ char	*create_full_path(char *path_dir, char *cmd)
 		return (free(temp_path), NULL);
 	free(temp_path);
 	return (full_path);
-}
-
-char	*get_path(char *cmd, char **env)
-{
-	char	**paths;
-	char	*path_var;
-	char	*full_path;
-	int		i;
-
-	path_var = get_path_var(env);
-	paths = ft_split(path_var, ':');
-	if (!path_var || !paths)
-		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		full_path = create_full_path(paths[i], cmd);
-		if (full_path && access(full_path, F_OK) == 0)
-		{
-			ft_free(paths);
-			return (full_path);
-		}
-		free(full_path);
-		i++;
-	}
-	ft_free(paths);
-	return (NULL);
 }

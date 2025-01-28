@@ -1,6 +1,6 @@
 NAME := pipex
 
-SRC:= $(addprefix $(SRC_DIR),init.c utils.c handle.c init_bonus.c)
+SRC:= $(addprefix $(SRC_DIR),child.c exec.c handle_pipe.c init_bonus.c pipe.c utils.c)
 OBJ_DIR:= .obj/
 OBJ:= $(SRC:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 DEPS:= $(OBJ:%.o=%.d)
