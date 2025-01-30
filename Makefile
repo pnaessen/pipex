@@ -1,6 +1,11 @@
 NAME := pipex
 
-SRC:= $(addprefix $(SRC_DIR),child.c exec.c handle_pipe.c init_bonus.c pipe.c utils.c)
+SRC:= $(addprefix $(SRC_DIR),exec.c utils.c handle_pipe.c child.c pipe.c)
+ifdef BONUS
+	SRC:= $(SRC) $(addprefix $(SRC_DIR), init_bonus.c)
+else	
+	SRC:= $(SRC) $(addprefix $(SRC_DIR), init.c)
+endif
 OBJ_DIR:= .obj/
 OBJ:= $(SRC:$(SRC_DIR)%.c=$(OBJ_DIR)%.o)
 DEPS:= $(OBJ:%.o=%.d)
@@ -46,6 +51,9 @@ MAGENTA = \033[0;95m
 CYAN = \033[0;96m
 WHITE = \033[0;97m
 
+bonus:
+	$(MAKE) BONUS=1 all
+	
 welcome:
 	@echo "🍳 $(CYAN)Préchauffage des fourneaux pour $(NAME)... La compilation mijote ! $(DEF_COLOR)"
 
@@ -72,4 +80,4 @@ info:
 	@echo "OBJ": $(OBJ)
 	@echo "DEPS": $(DEPS)
 
-.PHONY: all clean fclean re libft
+.PHONY: all clean fclean re libft bonus

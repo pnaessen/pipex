@@ -3,39 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pn <pn@student.42lyon.fr>                  +#+  +:+       +#+        */
+/*   By: pnaessen <pnaessen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 15:42:30 by pn                #+#    #+#             */
-/*   Updated: 2025/01/28 20:21:26 by pn               ###   ########lyon.fr   */
+/*   Updated: 2025/01/30 17:29:01 by pnaessen         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void execute_command(t_pipex *data, char *cmd)
+void	execute_command(t_pipex *data, char *cmd)
 {
-    char    **args;
-    char    *path;
+	char	**args;
+	char	*path;
 
-    args = ft_split(cmd, ' ');
-    if (!args)
-    {
-        free_pipex(data);
-        handle_error("Split failed", -1, -1);
-    }
-    path = get_path(*args, data->env);
-    if (!path)
-    {
-        ft_free(args);
-        free_pipex(data);
-        ft_printf("Command not found");
-        exit(EXIT_FAILURE);
-    }
-    execve(path, args, data->env);
-    free(path);
-    ft_free(args);
-    free_pipex(data);
-    handle_error("Execve failed", -1, -1);
+	args = ft_split(cmd, ' ');
+	if (!args)
+	{
+		free_pipex(data);
+		handle_error("Split failed", -1, -1);
+	}
+	path = get_path(*args, data->env);
+	if (!path)
+	{
+		ft_free(args);
+		free_pipex(data);
+		ft_printf("Command not found");
+		exit(EXIT_FAILURE);
+	}
+	execve(path, args, data->env);
+	free(path);
+	ft_free(args);
+	free_pipex(data);
+	handle_error("Execve failed", -1, -1);
 }
 
 int	check_cmd(char *cmd, char **env)
