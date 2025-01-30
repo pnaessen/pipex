@@ -64,10 +64,13 @@ This is equivalent to: `cmd << LIMITER | cmd1 >> file`
 📁 include/
 📁 libft/
 📁 src/ 
-│ ├── handle.c 
+│ ├── child.c 
 │ ├── init_bonus.c 
 │ ├── init.c
 │ └── utils.c
+│ └──exec.c
+│ └──handle_pipe.c
+│ └──pipe.c
 └── Makefile
 ```
 ## ⚠️ Notes
